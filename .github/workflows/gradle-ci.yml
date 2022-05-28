@@ -12,10 +12,14 @@ on:
 
 # The list of workflows that get triggered when the above actions take place
 # A job groups set of actions that need to happen.
+# The jobs (if many) by default will run parallel on different servers provided by github.
 jobs:
   build-java: # Name of the job
 
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}} # github provides ubintu, macOs and windows servers.
+    strategy:
+      matrix: # used when we want to different versions, whether OS for servers or environment for testing.
+        os: [ubuntu-latest, windows-latest, macOS-latest]
     
     steps:
     # Whenever we need to build test or run application, we need to checkout first.
@@ -33,3 +37,7 @@ jobs:
       # The above command to make gradlew file executable
     - name: Build with Gradle
       run: ./gradlew build # runs the file.
+    
+  # publish:
+
+  #   needs: build # this command specifies, "publish" will run only after succesfully executing "build-java" job.
